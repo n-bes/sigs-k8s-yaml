@@ -91,7 +91,10 @@ func jsonUnmarshal(reader io.Reader, obj interface{}, opts ...JSONOpt) error {
 	for _, opt := range opts {
 		d = opt(d)
 	}
-	return d.Decode(obj)
+	if err := d.Decode(&obj); err != nil {
+		return fmt.Errorf("while decoding JSON: %v", err)
+	}
+	return nil
 }
 
 // JSONToYAML converts JSON to YAML. Notable implementation details:
@@ -110,13 +113,13 @@ func JSONToYAML(j []byte) ([]byte, error) {
 	// number type, so we can preserve number type throughout this process.
 	err := yaml.Unmarshal(j, &jsonObj)
 	if err != nil {
-		return nil, fmt.Errorf("error converting JSON to YAML: %w", err)
+		return nil, err
 	}
 
 	// Marshal this object into YAML.
 	yamlBytes, err := yaml.Marshal(jsonObj)
 	if err != nil {
-		return nil, fmt.Errorf("error converting JSON to YAML: %w", err)
+		return nil, err
 	}
 
 	return yamlBytes, nil
@@ -155,7 +158,7 @@ func yamlToJSONTarget(yamlBytes []byte, jsonTarget *reflect.Value, unmarshalFn f
 	var yamlObj interface{}
 	err := unmarshalFn(yamlBytes, &yamlObj)
 	if err != nil {
-		return nil, fmt.Errorf("error converting YAML to JSON: %w", err)
+		return nil, err
 	}
 
 	// YAML objects are not completely compatible with JSON objects (e.g. you
@@ -164,13 +167,13 @@ func yamlToJSONTarget(yamlBytes []byte, jsonTarget *reflect.Value, unmarshalFn f
 	// incompatibilties happen along the way.
 	jsonObj, err := convertToJSONableObject(yamlObj, jsonTarget)
 	if err != nil {
-		return nil, fmt.Errorf("error converting YAML to JSON: %w", err)
+		return nil, err
 	}
 
 	// Convert this object to JSON and return the data.
 	jsonBytes, err := json.Marshal(jsonObj)
 	if err != nil {
-		return nil, fmt.Errorf("error converting YAML to JSON: %w", err)
+		return nil, err
 	}
 	return jsonBytes, nil
 }
