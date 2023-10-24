@@ -2,24 +2,21 @@
 
 approvers:
 - dims
-- lavalamp
+- jpbetz
 - smarterclayton
 - deads2k
 - sttts
 - liggitt
-- caesarxuchao
 reviewers:
 - dims
 - thockin
-- lavalamp
+- jpbetz
 - smarterclayton
 - wojtek-t
 - deads2k
 - derekwaynecarr
-- caesarxuchao
 - mikedanese
 - liggitt
-- gmarek
 - sttts
 - tallclair
 labels:
